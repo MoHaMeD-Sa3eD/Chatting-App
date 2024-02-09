@@ -1,6 +1,7 @@
 # chat_app
 
-A new Flutter project.
+A chat app to help people communicate with each other using Firebase
+
 
 ## Getting Started
 
