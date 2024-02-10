@@ -23,16 +23,13 @@ class _ChatScreenState extends State<ChatScreen> {
 
   ScrollController listViewController = ScrollController();
 
-  var data;
+  String dataa = '';
 
   @override
   Widget build(BuildContext context) {
-    String email = ModalRoute
-        .of(context)!
-        .settings
-        .arguments as String;
+    String email = ModalRoute.of(context)!.settings.arguments as String;
     CollectionReference messages =
-    FirebaseFirestore.instance.collection(kMessagesCollection);
+        FirebaseFirestore.instance.collection(kMessagesCollection);
     return StreamBuilder<QuerySnapshot>(
       stream: messages.orderBy(kMessageTime, descending: true).snapshots(),
       builder: (context, snapshot) {
@@ -40,7 +37,7 @@ class _ChatScreenState extends State<ChatScreen> {
           List<MessagesCollectionModel> messagesList = [];
           for (var i = 0; i < snapshot.data!.docs.length; i++) {
             MessagesCollectionModel messagesCollectionModel =
-            MessagesCollectionModel.fromFireStore(snapshot.data!.docs[i]);
+                MessagesCollectionModel.fromFireStore(snapshot.data!.docs[i]);
             messagesList.add(messagesCollectionModel);
           }
           return Scaffold(
@@ -87,10 +84,10 @@ class _ChatScreenState extends State<ChatScreen> {
                     itemBuilder: (context, index) {
                       return messagesList[index].id == email
                           ? UserChatContainer(
-                        messagesCollectionModel: messagesList[index],
-                      )
+                              messagesCollectionModel: messagesList[index],
+                            )
                           : FriendChatContainer(
-                          messagesCollectionModel: messagesList[index]);
+                              messagesCollectionModel: messagesList[index]);
                     },
                   ),
                 ),
@@ -104,6 +101,7 @@ class _ChatScreenState extends State<ChatScreen> {
                         kMessageTime: DateTime.now().toString(),
                         kMessageID: email,
                       });
+
                       textFieldController.clear();
                       listViewController.animateTo(
                         listViewController.position.minScrollExtent,
@@ -111,29 +109,39 @@ class _ChatScreenState extends State<ChatScreen> {
                         curve: Curves.easeOut,
                       );
                     },
+                    onChanged: (data) {
+                      dataa = data;
+                    },
                     decoration: InputDecoration(
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(20),
-                          borderSide: const BorderSide(color: kPrimaryColor),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(20),
+                        borderSide: const BorderSide(color: kPrimaryColor),
+                      ),
+                      enabledBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(16),
+                        borderSide: const BorderSide(color: kPrimaryColor),
+                      ),
+                      suffixIcon: IconButton(
+                        onPressed: () {
+                          messages.add({
+                            kMessageField: dataa,
+                            kMessageTime: DateTime.now().toString(),
+                            kMessageID: email,
+                          });
+                          textFieldController.clear();
+                          listViewController.animateTo(
+                            listViewController.position.minScrollExtent,
+                            duration: const Duration(milliseconds: 500),
+                            curve: Curves.easeOut,
+                          );
+                        },
+                        icon: const Icon(
+                          Icons.send,
+                          color: kPrimaryColor,
                         ),
-                        enabledBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(16),
-                          borderSide: const BorderSide(color: kPrimaryColor),
-                        ),
-                        suffixIcon: IconButton(
-                          onPressed: () {
-                            messages.add({
-                              kMessageField: data,
-                              kMessageTime: DateTime.now().toString(),
-                              kMessageID: email,
-                            });
-                                },
-                          icon: const Icon(
-                            Icons.send,
-                            color: kPrimaryColor,
-                          ),
-                        ),
-                        hintText: 'Send message'),
+                      ),
+                      hintText: 'Send message',
+                    ),
                   ),
                 ),
               ],
