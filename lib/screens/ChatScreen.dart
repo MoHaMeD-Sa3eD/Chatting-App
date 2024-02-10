@@ -96,21 +96,20 @@ class _ChatScreenState extends State<ChatScreen> {
                   child: TextField(
                     controller: textFieldController,
                     onSubmitted: (data) {
-                      messages.add({
-                        kMessageField: data,
-                        kMessageTime: DateTime.now().toString(),
-                        kMessageID: email,
-                      });
+                      if (data != '' && data != null) {
+                        messages.add({
+                          kMessageField: data,
+                          kMessageTime: DateTime.now().toString(),
+                          kMessageID: email,
+                        });
 
-                      textFieldController.clear();
-                      listViewController.animateTo(
-                        listViewController.position.minScrollExtent,
-                        duration: const Duration(milliseconds: 500),
-                        curve: Curves.easeOut,
-                      );
-                    },
-                    onChanged: (data) {
-                      dataa = data;
+                        textFieldController.clear();
+                        listViewController.animateTo(
+                          listViewController.position.minScrollExtent,
+                          duration: const Duration(milliseconds: 500),
+                          curve: Curves.easeOut,
+                        );
+                      }
                     },
                     decoration: InputDecoration(
                       border: OutlineInputBorder(
@@ -123,17 +122,21 @@ class _ChatScreenState extends State<ChatScreen> {
                       ),
                       suffixIcon: IconButton(
                         onPressed: () {
-                          messages.add({
-                            kMessageField: dataa,
-                            kMessageTime: DateTime.now().toString(),
-                            kMessageID: email,
-                          });
-                          textFieldController.clear();
-                          listViewController.animateTo(
-                            listViewController.position.minScrollExtent,
-                            duration: const Duration(milliseconds: 500),
-                            curve: Curves.easeOut,
-                          );
+                          dataa = textFieldController.text.trim();
+                          if (dataa != '' && dataa != null) {
+                            messages.add({
+                              kMessageField: dataa,
+                              kMessageTime: DateTime.now().toString(),
+                              kMessageID: email,
+                            });
+
+                            textFieldController.clear();
+                            listViewController.animateTo(
+                              listViewController.position.minScrollExtent,
+                              duration: const Duration(milliseconds: 500),
+                              curve: Curves.easeOut,
+                            );
+                          }
                         },
                         icon: const Icon(
                           Icons.send,
